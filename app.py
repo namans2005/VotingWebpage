@@ -87,7 +87,7 @@ def admin_login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        if username == 'admin' and password == 'password':
+        if username == 'admin' and password == 'smartvote':
             session['is_admin'] = True
             return redirect(url_for('admin_dashboard'))
         flash('Invalid credentials')
