@@ -1,0 +1,100 @@
+<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+        <h1 class="text-3xl font-bold text-gray-900 mb-8">Admin Dashboard</h1>
+        
+        <!-- Create New Election Form -->
+        <div class="bg-white shadow rounded-lg p-6 mb-8">
+            <h2 class="text-xl font-semibold mb-4">Create New Election</h2>
+            <form id="electionForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Election Title</label>
+                    <input type="text" name="title" required
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Position Name</label>
+                    <input type="text" name="position" required
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Election Key</label>
+                    <input type="text" name="electionKey" required
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+                
+                <div id="candidatesContainer">
+                    <label class="block text-sm font-medium text-gray-700">Candidates</label>
+                    <div class="space-y-2">
+                        <div class="flex gap-2">
+                            <input type="text" name="candidates[]" required
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="text" name="candidates[]" required
+                                   class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="button" onclick="addCandidateField()"
+                        class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Add Candidate
+                </button>
+                
+                <div>
+                    <button type="submit"
+                            class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Create Election
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- contentFor('scripts') %>
+<script>
+function addCandidateField() {
+    const container = document.querySelector('#candidatesContainer .space-y-2');
+    const newField = document.createElement('div');
+    newField.className = 'flex gap-2';
+    newField.innerHTML = `
+        <input type="text" name="candidates[]" required
+               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+    `;
+    container.appendChild(newField);
+}
+
+document.getElementById('electionForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const data = {
+        title: formData.get('title'),
+        position: formData.get('position'),
+        electionKey: formData.get('electionKey'),
+        candidates: [...formData.getAll('candidates[]')]
+    };
+    
+    try {
+        const response = await fetch('/admin/create-election', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        if (result.success) {
+            alert(`Election created successfully!\nElection Key: ${result.electionKey}`);
+            e.target.reset();
+        } else {
+            alert('Error creating election: ' + result.error);
+        }
+    } catch (error) {
+        alert('Error creating election: ' + error.message);
+    }
+});
+</script>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .bg-gradient {
+            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(16, 185, 129, 0.1) 100%);
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .content-wrapper {
+            min-height: calc(100vh - 4rem);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background-image 0.5s ease-in-out;
+        }
+        /* Different backgrounds for different pages */
+        .bg-home {
+            background-image: url('/static/images/election-7167-x-3126-background.png');
+        }
+        .bg-admin {
+            background-image: url('/static/images/pngtree-aesthetic-technology-abs.png');
+        }
+        .bg-voter {
+            background-image: url('/static/images/usa-presidential-election-day-vo.png');
+        }
+        .bg-results {
+            background-image: url('/static/images/1000_F_505411447_QXWFy4TNpjXh1kp.png');
+        }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <nav class="glass-effect text-indigo-900 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="{{ url_for('index') }}" class="font-bold text-xl hover:text-indigo-600 transition-colors">
+                    Secure Voting System
+                </a>
+                <div class="flex space-x-4">
+                    <a href="{{ url_for('index') }}" 
+                       class="hover:bg-indigo-100 px-3 py-2 rounded-md transition-colors">Home</a>
+                    {% if session.get('is_admin') %}
+                        <a href="{{ url_for('admin_dashboard') }}" 
+                           class="hover:bg-indigo-100 px-3 py-2 rounded-md transition-colors">Dashboard</a>
+                        <a href="{{ url_for('admin_results') }}" 
+                           class="hover:bg-indigo-100 px-3 py-2 rounded-md transition-colors">Results</a>
+                        <a href="{{ url_for('admin_logout') }}" 
+                           class="hover:bg-red-100 text-red-600 px-3 py-2 rounded-md transition-colors">Logout</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="content-wrapper {% block page_background %}bg-home{% endblock %} bg-gradient">
+        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+                            <span class="block sm:inline">{{ message }}</span>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

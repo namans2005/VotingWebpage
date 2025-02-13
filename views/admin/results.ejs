@@ -1,0 +1,75 @@
+<div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+    <div class="px-4 py-6 sm:px-0">
+        <h1 class="text-3xl font-bold text-gray-900 mb-8">Election Results</h1>
+        
+        <% 
+        let currentElection = null;
+        results.forEach((result, index) => {
+            if (!currentElection || currentElection !== result.title) {
+                if (currentElection) { %>
+                    </div>
+                <% }
+                currentElection = result.title;
+        %>
+            <div class="bg-white shadow rounded-lg p-6 mb-8">
+                <h2 class="text-xl font-semibold mb-2"><%= result.title %></h2>
+                <p class="text-gray-600 mb-4">Position: <%= result.position %></p>
+                
+                <div class="space-y-4">
+                    <canvas id="chart-<%= index %>" class="w-full h-64 mb-4"></canvas>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <% results.filter(r => r.title === result.title).forEach(candidate => { %>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="font-medium"><%= candidate.name %></div>
+                                <div class="text-gray-600"><%= candidate.votes %> votes</div>
+                            </div>
+                        <% }) %>
+                    </div>
+                </div>
+        <% }
+        }) %>
+        <% if (currentElection) { %>
+            </div>
+        <% } %>
+    </div>
+</div>
+
+<%- contentFor('scripts') %>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    <% 
+    let processedElections = new Set();
+    results.forEach((result, index) => {
+        if (!processedElections.has(result.title)) {
+            processedElections.add(result.title);
+            const electionResults = results.filter(r => r.title === result.title);
+    %>
+        new Chart(document.getElementById('chart-<%= index %>').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: [<%= electionResults.map(r => `'${r.name}'`).join(',') %>],
+                datasets: [{
+                    label: 'Votes',
+                    data: [<%= electionResults.map(r => r.votes).join(',') %>],
+                    backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                    borderColor: 'rgba(79, 70, 229, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    <% }
+    }) %>
+});
+</script>

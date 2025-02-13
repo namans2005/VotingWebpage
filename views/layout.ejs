@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <%- defineContent('head') %>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-indigo-600 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="/" class="font-bold text-xl">Voting System</a>
+                <div class="flex space-x-4">
+                    <a href="/" class="hover:bg-indigo-700 px-3 py-2 rounded-md">Home</a>
+                    <% if (typeof isAdmin !== 'undefined' && isAdmin) { %>
+                        <a href="/admin/dashboard" class="hover:bg-indigo-700 px-3 py-2 rounded-md">Dashboard</a>
+                        <a href="/admin/results" class="hover:bg-indigo-700 px-3 py-2 rounded-md">Results</a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <%- body %>
+    </main>
+
+    <%- defineContent('scripts') %>
+</body>
+</html>
